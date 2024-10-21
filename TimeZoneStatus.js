@@ -1,86 +1,103 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 
+// Helper function to ensure valid string rendering
+const safeString = (value) => (value !== undefined && value !== null ? String(value) : 'N/A');
+
+// Function to get the current time in a specific time zone
 
 
-const getTime=()=>{
-    
-}
+// Function to get weather data for a city with error handling
+const getWeather = async (city) => {
+  try {
+    const apiKey = 'd80f280c9e256dcf041daa8984d9714a'; // Replace with your API key
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.main) {
+      return data.main.temp;
+    } else {
+      console.error(`Weather data not found for ${city}`);
+      return 'N/A'; // Fallback value
+    }
+  } catch (error) {
+    console.error(`Error fetching weather for ${city}:`, error);
+    return 'N/A'; // Fallback value
+  }
+};
+
+
+
 const TimeZoneStatus = () => {
-  const [indiaTime, setIndiaTime] = useState(getTime('Asia/Kolkata'));
-  const [parisTime, setParisTime] = useState(getTime('Europe/Paris'));
-  const [newYorkTime, setNewYorkTime] = useState(getTime('America/New_York'));
-  const [londonTime, setLondonTime] = useState(getTime('Europe/London'));
-  const [tokyoTime, setTokyoTime] = useState(getTime('Asia/Tokyo'));
-  const [sydneyTime, setSydneyTime] = useState(getTime('Australia/Sydney'));
-
-
-  // Weather states
+  const [times, setTimes] = useState({});
   const [weatherData, setWeatherData] = useState({});
 
 
 
-// Reusable component for each timebox
-
   return (
-    <ImageBackground 
-      source={{uri: 'https://images.unsplash.com/photo-1653903056453-a52d9a2df52b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}} 
-      style={styles.backgroundImage} 
+    <ImageBackground
+      source={{
+        uri: 'https://images.unsplash.com/photo-1653903056453-a52d9a2df52b?q=80',
+      }}
+      style={styles.backgroundImage}
       resizeMode="cover"
     >
-
-      <View style={styles.overlay} /> {/* Overlay for blur effect */}
+      <View style={styles.overlay} />
       <Text style={styles.heading}>Planet Pulse: Time & Weather</Text>
-      <View style={styles.container} testID='timeBoxContainer'>
-        
+      <View style={styles.container}>
+      
       </View>
     </ImageBackground>
   );
 };
 
-
-
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center', // Centers all content horizontally
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black overlay for blur effect
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Dark background for contrast
   },
   heading: {
     fontSize: 38,
-    top:10,
     fontWeight: 'bold',
     color: '#F5C542',
-    fontFamily:'Brush Script MT',
-    textAlign:'center',
+    fontFamily: 'Brush Script MT',
+    textAlign: 'center',
     textShadowColor: '#000',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
+    marginBottom: 20, // Space between heading and clocks
   },
   container: {
     flex: 1,
+    flexDirection: 'row', // Row layout for time boxes
+    flexWrap: 'wrap', // Wrap timeboxes to the next row
+    justifyContent: 'center', // Center align horizontally
+    alignItems: 'center', // Center align vertically
   },
   timebox: {
-    width: 180,
-    height: 180,
-    borderRadius: 90, // Circular shape
-    backgroundColor: 'rgba(37, 118, 142,0.2)', // Semi-transparent white
-    borderWidth: 5,
-    borderColor: '#f5c542', // Golden color border
-    position: 'absolute',
-    alignItems: 'center', // Center horizontally
-    justifyContent: 'center', // Center vertically
+    width: 150,
+    height: 150,
+    borderRadius: 75, // Perfect circle
+    backgroundColor: 'rgba(37, 118, 142, 0.6)', // Semi-transparent circle background
+    borderWidth: 4,
+    borderColor: '#f5c542', // Golden border
+    margin: 20, // Spacing between circles
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 10, // For Android shadow
+    elevation: 10, // Shadow for Android
   },
   header: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 5,
@@ -94,13 +111,7 @@ const styles = StyleSheet.create({
     color: '#ddd',
     marginTop: 5,
   },
-  // Custom positions for each clock with adjusted spacing to avoid overlap
-  clock1: { top: 30, left: 220 }, // Glossy yellow
-  clock2: { top: 250, left: 420}, // Glossy blue
-  clock3: { top: 100, right: 280}, // Glossy purple
-  clock4: { bottom: 180, left: 30}, // Glossy green
-  clock5: { bottom: 50, right: 350 }, // Glossy red
-  clock6: { bottom: 300, right: 30}, // Glossy orange
 });
+
 
 export default TimeZoneStatus;
